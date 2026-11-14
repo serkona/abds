@@ -1,48 +1,20 @@
-# Лабораторный проект
+# ЭнергоСбыт
 
-[![labs](https://github.com/{your_username}/{your_repo}/actions/workflows/energosbyt.energosbyt.lab.yml/badge.svg)](https://github.com/{your_username}/{your_repo}/actions/workflows/energosbyt.energosbyt.lab.yml)
+Запуск: `make run && make setup`. Проверки: `make test`.
+Остановка: `make stop`.
+Для повторной загрузки данных: `make teardown && make setup`.
 
-Backend-сервис вымышленной ЖКХ-компании для практики по курсу «Архитектура систем обработки больших данных».
+Swagger UI: http://localhost:8080/docs. Спецификация OpenAPI: http://localhost:8080/openapi.json.
+FastAPI формирует спецификацию из маршрутов и моделей приложения.
 
-## С чего начать
+## Ключи и партиции
 
-1. **‼️ Настройте репозиторий** — проведите обязательную настройку контрибьюторов и защиты ветки (см. ниже)
-2. **[Лабораторные работы](https://github.com/sitnikovik/abds/tree/master/lab)** — технические задания для каждой лабораторной работы
-3. **[CONTRIBUTING.md](CONTRIBUTING.md)** — требования к структуре проекта, процесс разработки и проверки
-4. **[Документация курса](https://github.com/sitnikovik/abds)** — методические материалы и дополнительные ресурсы
+- `dim_realty`, `dim_gauges`, `dim_users`: `ORDER BY id` для поиска по идентификатору; у пользователей заменяются версии одной записи.
+- `dim_tariffs`: `(id, valid_from)` сохраняет отдельные интервалы тарифа.
+- `fact_gauge_bindings`: `(realty_id, gauge_id)` объединяет установку и аннулирование одного счётчика на объекте.
+- `fact_meter_readings`: `(realty_id, reading_date)` объединяет корректировки за один день.
+- `fact_invoice`: `(realty_id, created_at)` для выборки счетов объекта по времени.
 
-> [!IMPORTANT]
-> Поменяйте `{your_username}` и `{your_repo}` в badge на ваши имя пользователя и название репозитория.
+Показания и счета разбиты по месяцам для выборок за период. Небольшие справочники и привязки — без партиционирования.
 
-## Настройка репозитория
-
-### Защита основной ветки
-
-После создания репозитория из шаблона **обязательно настройте правила защиты для ветки `main`**:
-
-1. Откройте **Settings** → **Branches** → **Add classic branch protection rule**
-2. В поле **Branch name pattern** укажите: `main`
-3. Включите следующие опции:
-   - **Require a pull request before merging**
-     - Require approvals: **1**: требует минимум одного одобрения перед слиянием
-   - ***Require status checks to pass before merging***
-     - Выберите *"autograder"*: проверит все лабораторные работы автоматически
-     - ***Require branches to be up to date before merging*** (рекомендуется):
-     требует, чтобы ветка PR была синхронизирована с последними изменениями из основной ветки перед слиянием
-   - ***Do not allow bypassing the above settings***: запрещает обход настроек защиты ветки
-4. Нажмите **Create** или **Save changes**
-
-> ⚠️ **Важно:** Без этих настроек автоматические проверки не будут блокировать PR с ошибками.
-
-### Добавление коллабораторов
-
-Чтобы преподаватели могли проводить код-ревью:
-
-1. Откройте **Settings** → **Collaborators**
-2. Нажмите **Add people**
-3. Добавьте всех кто есть в списке ревьюеров в файле [CODEOWNERS](CODEOWNERS)
-4. Выберите роль: **Write** (или выше), иначе ревьюер не сможет одобрить PR
-
-## Помощь
-
-Возникли вопросы? → [@sitnikovik](https://t.me/sitnikovik)
+[Проверка сценариев лабораторной 1](docs/lab-01.md).
